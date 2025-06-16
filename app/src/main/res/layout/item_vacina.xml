@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_vacina"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin_small"
+    android:layout_marginVertical="@dimen/margin_tiny"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardBackgroundColor="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_medium">
+
+        <!-- Ícone da vacina -->
+        <ImageView
+            android:id="@+id/iv_vacina"
+            android:layout_width="@dimen/icon_size_medium"
+            android:layout_height="@dimen/icon_size_medium"
+            android:src="@drawable/ic_vacina_03_24"
+            app:tint="@color/primary_teal"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/vacinas_titulo" />
+
+        <!-- Informações da vacina -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Nome e disponibilidade -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tv_nome_vacina"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nome da Vacina"
+                    android:textSize="@dimen/text_size_medium"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/roboto_medium"
+                    android:layout_marginEnd="@dimen/margin_small" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_disponibilidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Disponível"
+                    android:textSize="@dimen/text_size_tiny"
+                    android:textColor="@color/white"
+                    app:chipMinHeight="24dp"
+                    app:chipCornerRadius="12dp"
+                    android:clickable="false" />
+
+            </LinearLayout>
+
+            <!-- Descrição -->
+            <TextView
+                android:id="@+id/tv_descricao_vacina"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição da vacina"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="@dimen/margin_tiny"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Faixa etária e doses -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin_small">
+
+                <TextView
+                    android:id="@+id/tv_faixa_etaria"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Faixa etária: Todas"
+                    android:textSize="@dimen/text_size_tiny"
+                    android:textColor="@color/text_secondary"
+                    android:drawableStart="@drawable/ic_person_24"
+                    android:drawablePadding="@dimen/padding_tiny"
+                    android:drawableTint="@color/text_secondary"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/tv_doses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Doses: 2"
+                    android:textSize="@dimen/text_size_tiny"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

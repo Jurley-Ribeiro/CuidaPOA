@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_ubs"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin_small"
+    android:layout_marginVertical="@dimen/margin_tiny"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardBackgroundColor="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_medium">
+
+        <!-- Cabeçalho: Nome e Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="@dimen/icon_size_small"
+                android:layout_height="@dimen/icon_size_small"
+                android:src="@drawable/ic_ubs"
+                android:tint="@color/primary_teal"
+                android:layout_marginEnd="@dimen/margin_small" />
+
+            <TextView
+                android:id="@+id/tv_nome_ubs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/nome_da_ubs"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto_medium"
+                android:layout_marginEnd="@dimen/margin_small" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/aberta"
+                android:textSize="@dimen/text_size_tiny"
+                android:textColor="@color/white"
+                app:chipMinHeight="24dp"
+                app:chipCornerRadius="12dp"
+                android:clickable="false" />
+
+        </LinearLayout>
+
+        <!-- Endereço -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_small"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_location"
+                android:tint="@color/text_secondary"
+                android:layout_marginEnd="@dimen/margin_tiny" />
+
+            <TextView
+                android:id="@+id/tv_endereco_ubs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/endereco_completo"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Horário -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_tiny"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_time"
+                android:tint="@color/text_secondary"
+                android:layout_marginEnd="@dimen/margin_tiny" />
+
+            <TextView
+                android:id="@+id/tv_horario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Segunda a Sexta: 7h às 19h"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Telefone e Ações -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_phone"
+                android:tint="@color/text_secondary"
+                android:layout_marginEnd="@dimen/margin_tiny" />
+
+            <TextView
+                android:id="@+id/tv_telefone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="(51) 3289-2600"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/text_secondary" />
+
+            <!-- Botões de ação -->
+            <ImageButton
+                android:id="@+id/btn_telefone"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_phone"
+                android:tint="@color/accent_blue"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Ligar"
+                android:layout_marginEnd="@dimen/margin_small" />
+
+            <ImageButton
+                android:id="@+id/btn_mapa"
+                android:layout_width="@dimen/icon_size_medium"
+                android:layout_height="@dimen/icon_size_medium"
+                android:src="@drawable/ic_map"
+                android:tint="@color/accent_blue"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/ver_no_mapa" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

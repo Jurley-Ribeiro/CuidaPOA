@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    tools:context=".view.fragments.HomeFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_medium">
+
+        <!-- Logo e Título -->
+        <ImageView
+            android:id="@+id/logo_home"
+            android:layout_width="@dimen/logo_width"
+            android:layout_height="@dimen/logo_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:src="@drawable/ic_logo_splash"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/margin_large"
+            android:text="@string/home_title"
+            android:textSize="@dimen/text_size_large"
+            android:textColor="@color/text_primary"
+            android:fontFamily="@font/roboto_medium" />
+
+        <!-- Grid de Cards -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/margin_medium">
+
+            <!-- Card Vacinas -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_vacinas"
+                style="@style/Widget.CuidaPOA.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_card_height"
+                android:layout_marginBottom="@dimen/margin_medium"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/padding_medium"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/home_grid_icon_size"
+                        android:layout_height="@dimen/home_grid_icon_size"
+                        android:src="@drawable/ic_vacina_03_24"
+                        android:contentDescription="@string/home_vacinas"
+                        app:tint="@color/primary_teal" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="@dimen/margin_medium">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_vacinas"
+                            android:textSize="@dimen/text_size_large"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="@font/roboto_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Consulte as vacinas disponíveis"
+                            android:textSize="@dimen/text_size_small"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="@dimen/margin_tiny" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_forward_24"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card Busca UBS -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_busca_ubs"
+                style="@style/Widget.CuidaPOA.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_card_height"
+                android:layout_marginBottom="@dimen/margin_medium"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/padding_medium"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/home_grid_icon_size"
+                        android:layout_height="@dimen/home_grid_icon_size"
+                        android:src="@drawable/ic_ubs"
+                        app:tint="@color/accent_blue"
+                        android:contentDescription="@string/home_busca_ubs" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="@dimen/margin_medium">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_busca_ubs"
+                            android:textSize="@dimen/text_size_large"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="@font/roboto_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/encontre_unidade_prox"
+                            android:textSize="@dimen/text_size_small"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="@dimen/margin_tiny" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_forward_24"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card Suporte -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_suporte"
+                style="@style/Widget.CuidaPOA.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_card_height"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/padding_medium"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/home_grid_icon_size"
+                        android:layout_height="@dimen/home_grid_icon_size"
+                        android:src="@drawable/ic_help"
+                        app:tint="@color/accent_yellow"
+                        android:contentDescription="@string/home_suporte" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="@dimen/margin_medium">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_suporte"
+                            android:textSize="@dimen/text_size_large"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="@font/roboto_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tire suas dúvidas conosco"
+                            android:textSize="@dimen/text_size_small"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="@dimen/margin_tiny" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_forward_24"
+                        app:tint="@color/text_secondary" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

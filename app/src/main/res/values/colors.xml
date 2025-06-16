@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cores Principais -->
+    <color name="primary_teal">#009994</color>
+    <color name="primary_teal_dark">#007772</color> <!-- Versão mais escura para status bar -->
+    <color name="primary_teal_light">#4DB6B2</color> <!-- Versão mais clara -->
+
+    <!-- Cores de Acentuação -->
+    <color name="accent_blue">#566AD2</color>
+    <color name="accent_yellow">#FFDF57</color>
+
+    <!-- Cores Neutras -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="background_light">#FAFAFA</color>
+    <color name="footer_gray">#EDEDEE</color>
+
+    <!-- Escala de Cinzas -->
+    <color name="light_gray">#C5C5C9</color>
+    <color name="medium_gray">#525257</color>
+    <color name="dark_gray">#39393D</color>
+    <color name="text_dark">#212529</color>
+
+    <!-- Cores Semânticas -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FF9800</color>
+    <color name="info">#2196F3</color>
+
+    <!-- Cores para Cards e Superfícies -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_shadow">#1A000000</color> <!-- 10% de opacidade -->
+
+    <!-- Cores de Texto -->
+    <color name="text_primary">#212529</color>
+    <color name="text_secondary">#525257</color>
+    <color name="text_hint">#C5C5C9</color>
+    <color name="text_on_primary">#FFFFFF</color>
+</resources>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Info -->
+    <string name="app_name">CuidaPOA</string>
+    <string name="app_description">Aplicativo para gestão e consulta de informações das Unidades Básicas de Saúde</string>
+
+    <!-- Tela Inicial -->
+    <string name="home_title">Bem-vindo ao CuidaPOA</string>
+    <string name="home_vacinas">Vacinas</string>
+    <string name="home_busca_ubs">Busca UBS</string>
+    <string name="home_suporte">Dúvidas e Suporte</string>
+
+    <!-- Menu -->
+    <string name="menu_home">Início</string>
+    <string name="menu_sobre">Sobre</string>
+    <string name="menu_login">Área do Gestor</string>
+    <string name="menu_logout">Sair</string>
+    <string name="menu_configuracoes">Configurações</string>
+
+    <!-- Sobre -->
+    <string name="sobre_titulo">Sobre o Aplicativo</string>
+    <string name="sobre_desenvolvedor">Desenvolvido por: Jurley C. Ribeiro</string>
+    <string name="sobre_disciplina">Disciplina: Desenv. Software III - Android</string>
+    <string name="sobre_instituicao">IFRS - Campus Porto Alegre</string>
+    <string name="sobre_objetivo">Este aplicativo tem como objetivo facilitar o acesso às informações
+        das Unidades Básicas de Saúde, permitindo que cidadãos consultem serviços, vacinas e
+        informações gerais, além de possibilitar que gestores mantenham essas informações
+        atualizadas.
+    </string>
+
+    <!-- Login -->
+    <string name="login_titulo">Área do Gestor</string>
+    <string name="login_email">E-mail</string>
+    <string name="login_senha">Senha</string>
+    <string name="login_entrar">Entrar</string>
+    <string name="login_esqueci_senha">Esqueci minha senha</string>
+    <string name="login_erro_email">E-mail inválido</string>
+    <string name="login_erro_senha">A senha deve ter no mínimo 6 caracteres</string>
+    <string name="login_erro_autenticacao">Erro na autenticação. Verifique suas credenciais.</string>
+    <string name="login_sucesso">Login realizado com sucesso!</string>
+
+    <!-- Vacinas -->
+    <string name="vacinas_titulo">Vacinas Disponíveis</string>
+    <string name="vacinas_buscar">Buscar vacina…</string>
+    <string name="vacinas_vazio">Nenhuma vacina cadastrada</string>
+    <string name="vacinas_nome">Nome da Vacina</string>
+    <string name="vacinas_descricao">Descrição</string>
+    <string name="vacinas_idade">Faixa Etária</string>
+    <string name="vacinas_doses">Número de Doses</string>
+    <string name="vacinas_disponivel">Disponível</string>
+    <string name="vacinas_indisponivel">Indisponível</string>
+
+    <!-- UBS -->
+    <string name="ubs_titulo">Unidades Básicas de Saúde</string>
+    <string name="ubs_buscar">Buscar UBS…</string>
+    <string name="ubs_nome">Nome da UBS</string>
+    <string name="ubs_endereco">Endereço</string>
+    <string name="ubs_telefone">Telefone</string>
+    <string name="ubs_horario">Horário de Funcionamento</string>
+    <string name="ubs_servicos">Serviços Oferecidos</string>
+    <string name="ubs_profissionais">Profissionais</string>
+
+    <!-- Suporte -->
+    <string name="suporte_titulo">Dúvidas e Suporte</string>
+    <string name="suporte_email">Enviar E-mail</string>
+    <string name="suporte_telefone">Ligar para Suporte</string>
+    <string name="suporte_faq">Perguntas Frequentes</string>
+    <string name="suporte_assunto_email">Dúvida sobre o App Saúde UBS</string>
+
+    <!-- Mensagens Gerais -->
+    <string name="loading">Carregando…</string>
+    <string name="erro_generico">Ocorreu um erro. Tente novamente.</string>
+    <string name="sem_conexao">Sem conexão com a internet</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="salvar">Salvar</string>
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="voltar">Voltar</string>
+    <string name="fechar">Fechar</string>
+
+    <!-- Mensagens de Sucesso -->
+    <string name="cadastro_sucesso">Cadastrado com sucesso!</string>
+    <string name="edicao_sucesso">Editado com sucesso!</string>
+    <string name="exclusao_sucesso">Excluído com sucesso!</string>
+
+    <!-- Mensagens de Confirmação -->
+    <string name="confirmar_exclusao">Tem certeza que deseja excluir?</string>
+    <string name="confirmar_saida">Tem certeza que deseja sair?</string>
+
+    <!-- Admin -->
+    <string name="admin_titulo">Painel do Gestor</string>
+    <string name="admin_gerenciar_vacinas">Gerenciar Vacinas</string>
+    <string name="admin_gerenciar_servicos">Gerenciar Serviços</string>
+    <string name="admin_gerenciar_profissionais">Gerenciar Profissionais</string>
+    <string name="admin_configurar_ubs">Configurar UBS</string>
+
+    <!-- Validações -->
+    <string name="campo_obrigatorio">Campo obrigatório</string>
+    <string name="email_invalido">E-mail inválido</string>
+    <string name="telefone_invalido">Telefone inválido</string>
+
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir menu</string>
+    <string name="navigation_drawer_close">Fechar menu</string>
+    <string name="cuidando_saude_poa">Cuidando da saúde de Porto Alegre</string>
+    <string name="encontre_unidade_prox">Encontre unidades próximas</string>
+    <string name="area_restrita_gestores">Área restrita para gestores das UBS\n\nPara teste use:\nEmail: admin@cuidapoa.com\nSenha: 123456</string>
+    <string name="disponivel">Disponível</string>
+    <string name="nome_da_vacina">Nome da Vacina</string>
+    <string name="descricao_vacina">Descrição da vacina</string>
+    <string name="ver_no_mapa">Ver no mapa</string>
+    <string name="endereco_completo">Endereço completo</string>
+    <string name="aberta">Aberta</string>
+    <string name="nome_da_ubs">Nome da UBS</string>
+</resources>
