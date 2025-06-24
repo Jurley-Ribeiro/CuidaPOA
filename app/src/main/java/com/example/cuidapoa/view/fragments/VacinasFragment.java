@@ -1,5 +1,6 @@
 package com.example.cuidapoa.view.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.cuidapoa.R;
 import com.example.cuidapoa.adapter.VacinasAdapter;
 import com.example.cuidapoa.model.Vacina;
+import com.example.cuidapoa.view.CadastroVacinaActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,10 @@ public class VacinasFragment extends Fragment implements VacinasAdapter.OnVacina
     private VacinasAdapter adapter;
     private ProgressBar progressBar;
     private TextView tvEmpty;
+    private FloatingActionButton fabAdd;
+
+    // Simular estado de login
+    private boolean isAdmin = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +56,16 @@ public class VacinasFragment extends Fragment implements VacinasAdapter.OnVacina
         recyclerView = view.findViewById(R.id.recycler_vacinas);
         progressBar = view.findViewById(R.id.progress_bar);
         tvEmpty = view.findViewById(R.id.tv_empty);
+        fabAdd = view.findViewById(R.id.fab_add_vacina);
+
+        // Verificar se é admin (simulado - em produção viria do login)
+        isAdmin = getActivity().getIntent().getBooleanExtra("is_admin", false);
+
+        // Mostrar FAB apenas para admin
+        if (isAdmin) {
+            fabAdd.setVisibility(View.VISIBLE);
+            fabAdd.setOnClickListener(v -> abrirCadastroVacina());
+        }
 
         // Configurar RecyclerView
         configurarRecyclerView();
@@ -71,11 +88,20 @@ public class VacinasFragment extends Fragment implements VacinasAdapter.OnVacina
 
         // Simular carregamento com dados de exemplo
         recyclerView.postDelayed(() -> {
-            List<Vacina> vacinasExemplo = criarVacinasExemplo();
-            adapter.setVacinas(vacinasExemplo);
+            List<Vacina> todasVacinas = new ArrayList<>();
+
+            // Adicionar vacinas de exemplo
+            todasVacinas.addAll(criarVacinasExemplo());
+
+            // Adicionar vacinas cadastradas pelo admin
+            if (CadastroVacinaActivity.vacinasCadastradas != null) {
+                todasVacinas.addAll(CadastroVacinaActivity.vacinasCadastradas);
+            }
+
+            adapter.setVacinas(todasVacinas);
             mostrarCarregando(false);
 
-            if (vacinasExemplo.isEmpty()) {
+            if (todasVacinas.isEmpty()) {
                 mostrarListaVazia(true);
             }
         }, 1000);
@@ -228,5 +254,20 @@ public class VacinasFragment extends Fragment implements VacinasAdapter.OnVacina
         String mensagem = vacina.getNome() + " - " +
                 (vacina.isDisponivel() ? "Disponível" : "Indisponível");
         Snackbar.make(requireView(), mensagem, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void abrirCadastroVacina() {
+        Intent intent = new Intent(getActivity(), CadastroVacinaActivity.class);
+        startActivityForResult(intent, 100);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100 && resultCode == getActivity().RESULT_OK) {
+            // Recarregar lista após cadastro
+            carregarVacinas();
+        }
     }
 }

@@ -31,6 +31,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- LoginActivity -->
+        <activity
+            android:name=".view.LoginActivity"
+            android:label="@string/login_titulo"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.CuidaPOA" />
+
+        <!-- CadastroVacinaActivity -->
+        <activity
+            android:name=".view.CadastroVacinaActivity"
+            android:label="Cadastrar Vacina"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.CuidaPOA"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

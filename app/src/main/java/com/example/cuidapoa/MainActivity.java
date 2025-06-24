@@ -132,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Login realizado com sucesso
             if (data != null && data.getBooleanExtra("usuario_logado", false)) {
                 Snackbar.make(drawerLayout, "Bem-vindo, Gestor!", Snackbar.LENGTH_SHORT).show();
+
+                // Marcar como admin para mostrar funcionalidades extras
+                getIntent().putExtra("is_admin", true);
+
                 // TODO: Atualizar menu para mostrar opções do gestor
             }
         }

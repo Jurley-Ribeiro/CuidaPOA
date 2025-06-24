@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.CadastroVacinaActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_cadastro"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary_teal"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <!-- ScrollView para o formulário -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_medium">
+
+            <!-- Card do formulário -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_large">
+
+                    <!-- Título da seção -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Informações da Vacina"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/primary_teal"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/margin_medium" />
+
+                    <!-- Nome da Vacina -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_nome_vacina"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:hint="Nome da Vacina *"
+                        app:startIconDrawable="@drawable/ic_vacina_03_24"
+                        app:startIconTint="@color/primary_teal"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="50">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_nome_vacina"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:maxLength="50" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Descrição -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_descricao_vacina"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:hint="Descrição *"
+                        app:startIconDrawable="@drawable/ic_description"
+                        app:startIconTint="@color/primary_teal"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_descricao_vacina"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:maxLength="200"
+                            android:minLines="2"
+                            android:maxLines="4" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Faixa Etária -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_faixa_etaria"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:hint="Faixa Etária *"
+                        app:startIconDrawable="@drawable/ic_person_24"
+                        app:startIconTint="@color/primary_teal"
+                        app:helperText="Ex: Ao nascer, 2 meses, Idosos acima de 60 anos"
+                        app:helperTextEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_faixa_etaria"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Número de Doses -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_doses"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:hint="Número de Doses *"
+                        app:startIconDrawable="@drawable/ic_numbers_24dp"
+                        app:startIconTint="@color/primary_teal"
+                        app:endIconMode="dropdown_menu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/et_doses"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="48dp"
+                            android:importantForAccessibility="yes"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Observações -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_observacoes"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:hint="Observações (opcional)"
+                        app:startIconDrawable="@drawable/ic_notes_24dp"
+                        app:startIconTint="@color/primary_teal">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_observacoes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:maxLines="3" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Disponibilidade -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:padding="@dimen/padding_medium"
+                        android:background="@drawable/rounded_background">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size_small"
+                            android:layout_height="@dimen/icon_size_small"
+                            android:src="@drawable/ic_check_circle_24dp"
+                            android:layout_marginEnd="@dimen/margin_medium"
+                            app:tint="@color/primary_teal" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Vacina disponível"
+                            android:textSize="@dimen/text_size_medium"
+                            android:textColor="@color/text_primary" />
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switch_disponivel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            app:thumbTint="@color/white"
+                            app:trackTint="@color/primary_teal"
+                            app:trackTintMode="screen" />
+
+                    </LinearLayout>
+
+                    <!-- Botão Salvar -->
+                    <Button
+                        android:id="@+id/btn_salvar_vacina"
+                        style="@style/Widget.CuidaPOA.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:text="Salvar Vacina"
+                        android:textSize="@dimen/text_size_medium"
+                        android:backgroundTint="@color/primary_teal" />
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_width="@dimen/progress_bar_size"
+                        android:layout_height="@dimen/progress_bar_size"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/margin_medium"
+                        android:indeterminateTint="@color/primary_teal"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Informação adicional -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="* Campos obrigatórios"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginStart="@dimen/margin_small" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

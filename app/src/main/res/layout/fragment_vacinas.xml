@@ -36,4 +36,17 @@
         android:textColor="@color/text_secondary"
         android:visibility="gone" />
 
+    <!-- FAB para adicionar vacina (apenas para admin) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_vacina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_24dp"
+        android:contentDescription="Adicionar vacina"
+        app:backgroundTint="@color/primary_teal"
+        app:tint="@color/white"
+        android:visibility="gone" />
+
 </FrameLayout>
