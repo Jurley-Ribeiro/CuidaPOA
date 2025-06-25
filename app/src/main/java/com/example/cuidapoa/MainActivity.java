@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -16,9 +18,13 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import com.example.cuidapoa.repository.AuthRepository;
+import com.example.cuidapoa.model.Usuario;
 import com.example.cuidapoa.view.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
 
+    // Firebase
+    private AuthRepository authRepository;
+    private boolean isAdmin = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Instalar a SplashScreen
@@ -35,6 +45,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Inicializar Firebase - habilitar persistência offline
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch (Exception e) {
+            // Já foi habilitado
+        }
+
+        // Inicializar AuthRepository
+        authRepository = AuthRepository.getInstance();
 
         // Configurar Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -47,9 +67,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Configurar Navigation Component
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        // Definir os destinos de nível superior (que mostram o menu hambúrguer)
+        // Definir os destinos de nível superior
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home) // Apenas home mostra hambúrguer
+                R.id.nav_home)
                 .setOpenableLayout(drawerLayout)
                 .build();
 
@@ -59,6 +79,95 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Configurar listener do Navigation Drawer
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Verificar estado de login
+        verificarEstadoLogin();
+    }
+
+    private void verificarEstadoLogin() {
+        if (authRepository.isLogado()) {
+            // Usuário está logado
+            Usuario usuario = authRepository.getUsuarioAtual();
+            if (usuario != null) {
+                isAdmin = usuario.isAdmin();
+                atualizarUIUsuarioLogado(usuario);
+            } else {
+                // Carregar dados do usuário
+                authRepository.carregarDadosUsuario(new AuthRepository.OnAuthListener() {
+                    @Override
+                    public void onSuccess() {
+                        Usuario user = authRepository.getUsuarioAtual();
+                        if (user != null) {
+                            isAdmin = user.isAdmin();
+                            atualizarUIUsuarioLogado(user);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        // Falha ao carregar dados
+                    }
+                });
+            }
+        } else {
+            // Usuário não está logado
+            atualizarUIUsuarioDeslogado();
+        }
+    }
+
+    private void atualizarUIUsuarioLogado(Usuario usuario) {
+        // Atualizar header do navigation drawer
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvNome = headerView.findViewById(R.id.tv_header_nome);
+        TextView tvEmail = headerView.findViewById(R.id.tv_header_email);
+
+        if (tvNome != null) {
+            tvNome.setText(usuario.getNome());
+        }
+        if (tvEmail != null) {
+            tvEmail.setText(usuario.getEmail());
+        }
+
+        // Atualizar menu
+        Menu menu = navigationView.getMenu();
+        MenuItem loginItem = menu.findItem(R.id.nav_login);
+        if (loginItem != null) {
+            loginItem.setTitle("Sair");
+            loginItem.setIcon(R.drawable.ic_logout_24); // Você precisará criar este ícone
+        }
+
+        // Passar estado de admin para fragments
+        getIntent().putExtra("is_admin", isAdmin);
+
+        // Mostrar mensagem de boas-vindas
+        String tipoUsuario = isAdmin ? "Gestor" : "Cidadão";
+        Snackbar.make(drawerLayout, "Bem-vindo, " + tipoUsuario + "!", Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void atualizarUIUsuarioDeslogado() {
+        // Atualizar header do navigation drawer
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvNome = headerView.findViewById(R.id.tv_header_nome);
+        TextView tvEmail = headerView.findViewById(R.id.tv_header_email);
+
+        if (tvNome != null) {
+            tvNome.setText(R.string.app_name);
+        }
+        if (tvEmail != null) {
+            tvEmail.setText("Acesso cidadão");
+        }
+
+        // Atualizar menu
+        Menu menu = navigationView.getMenu();
+        MenuItem loginItem = menu.findItem(R.id.nav_login);
+        if (loginItem != null) {
+            loginItem.setTitle("Login Gestor");
+            loginItem.setIcon(R.drawable.ic_login_24); // Use o ícone existente
+        }
+
+        // Remover estado de admin
+        isAdmin = false;
+        getIntent().putExtra("is_admin", false);
     }
 
     @Override
@@ -84,15 +193,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_home) {
             navController.navigate(R.id.nav_home);
         } else if (id == R.id.nav_login) {
-            // Abrir tela de login
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, 100);
+            if (authRepository.isLogado()) {
+                // Se está logado, fazer logout
+                mostrarDialogLogout();
+            } else {
+                // Se não está logado, abrir tela de login
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivityForResult(intent, 100);
+            }
         } else if (id == R.id.nav_sobre) {
             mostrarDialogSobre();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void mostrarDialogLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Sair")
+                .setMessage("Deseja realmente sair da sua conta?")
+                .setPositiveButton("Sair", (dialog, which) -> {
+                    authRepository.logout();
+                    atualizarUIUsuarioDeslogado();
+                    // Recriar activity para resetar o estado
+                    recreate();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void mostrarDialogSobre() {
@@ -130,14 +258,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (requestCode == 100 && resultCode == RESULT_OK) {
             // Login realizado com sucesso
-            if (data != null && data.getBooleanExtra("usuario_logado", false)) {
-                Snackbar.make(drawerLayout, "Bem-vindo, Gestor!", Snackbar.LENGTH_SHORT).show();
-
-                // Marcar como admin para mostrar funcionalidades extras
-                getIntent().putExtra("is_admin", true);
-
-                // TODO: Atualizar menu para mostrar opções do gestor
-            }
+            verificarEstadoLogin();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Verificar estado de login sempre que a activity resumir
+        verificarEstadoLogin();
+    }
+
+    // Método público para fragments acessarem o estado de admin
+    public boolean isAdmin() {
+        return isAdmin;
     }
 }

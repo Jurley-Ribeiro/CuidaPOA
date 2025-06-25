@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -51,6 +52,8 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.firebaseui:firebase-ui-auth:8.0.2")
 
     // Splash Screen API
     implementation("androidx.core:core-splashscreen:1.0.1")

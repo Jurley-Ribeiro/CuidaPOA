@@ -46,6 +46,14 @@
             android:theme="@style/Theme.CuidaPOA"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- CadastroUBSActivity -->
+        <activity
+            android:name=".view.CadastroUBSActivity"
+            android:label="Cadastrar UBS"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.CuidaPOA"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

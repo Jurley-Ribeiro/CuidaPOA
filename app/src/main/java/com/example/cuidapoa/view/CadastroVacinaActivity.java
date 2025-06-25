@@ -14,13 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.cuidapoa.R;
 import com.example.cuidapoa.model.Vacina;
+import com.example.cuidapoa.repository.VacinaRepository;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.UUID;
 
 public class CadastroVacinaActivity extends AppCompatActivity {
 
@@ -37,13 +37,16 @@ public class CadastroVacinaActivity extends AppCompatActivity {
     private Vacina vacinaEditando = null;
     private boolean modoEdicao = false;
 
-    // Lista temporária (simular banco de dados)
-    public static List<Vacina> vacinasCadastradas = new ArrayList<>();
+    // Firebase
+    private VacinaRepository vacinaRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_vacina);
+
+        // Inicializar Repository
+        vacinaRepository = VacinaRepository.getInstance();
 
         inicializarViews();
         configurarToolbar();
@@ -128,26 +131,59 @@ public class CadastroVacinaActivity extends AppCompatActivity {
     }
 
     private void carregarVacinaParaEdicao(String vacinaId) {
-        // Simular busca da vacina
-        for (Vacina v : vacinasCadastradas) {
-            if (v.getId().equals(vacinaId)) {
-                vacinaEditando = v;
-                break;
-            }
-        }
+        mostrarCarregando(true);
 
-        if (vacinaEditando != null) {
-            preencherCampos();
-            getSupportActionBar().setTitle("Editar Vacina");
-            btnSalvar.setText("Atualizar");
-        }
+        // Buscar vacina no Firebase
+        vacinaRepository.obterVacinasUmaVez(new VacinaRepository.OnVacinasLoadedListener() {
+            @Override
+            public void onVacinasLoaded(List<Vacina> vacinas) {
+                mostrarCarregando(false);
+
+                // Procurar a vacina pelo ID
+                for (Vacina v : vacinas) {
+                    if (v.getId().equals(vacinaId)) {
+                        vacinaEditando = v;
+                        break;
+                    }
+                }
+
+                if (vacinaEditando != null) {
+                    preencherCampos();
+                    getSupportActionBar().setTitle("Editar Vacina");
+                    btnSalvar.setText("Atualizar");
+                } else {
+                    Snackbar.make(btnSalvar, "Vacina não encontrada", Snackbar.LENGTH_LONG)
+                            .setBackgroundTint(getColor(R.color.error))
+                            .show();
+                    finish();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                mostrarCarregando(false);
+                Snackbar.make(btnSalvar, "Erro ao carregar vacina: " + error, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(getColor(R.color.error))
+                        .show();
+                finish();
+            }
+        });
     }
 
     private void preencherCampos() {
         etNome.setText(vacinaEditando.getNome());
         etDescricao.setText(vacinaEditando.getDescricao());
         etFaixaEtaria.setText(vacinaEditando.getFaixaEtaria());
-        etDoses.setText(String.valueOf(vacinaEditando.getNumeroDoses()));
+
+        // Tratar doses especiais
+        if (vacinaEditando.getNumeroDoses() == -1) {
+            etDoses.setText("Anual");
+        } else if (vacinaEditando.getNumeroDoses() == 1) {
+            etDoses.setText("Dose única");
+        } else {
+            etDoses.setText(String.valueOf(vacinaEditando.getNumeroDoses()));
+        }
+
         etObservacoes.setText(vacinaEditando.getObservacoes());
         switchDisponivel.setChecked(vacinaEditando.isDisponivel());
     }
@@ -212,47 +248,93 @@ public class CadastroVacinaActivity extends AppCompatActivity {
         }
 
         if (valido) {
-            salvarVacina(nome, descricao, faixaEtaria, doses, observacoes, disponivel);
+            // Verificar se já existe uma vacina com o mesmo nome (apenas para cadastro novo)
+            if (!modoEdicao) {
+                verificarEExisteSalvar(nome, descricao, faixaEtaria, doses, observacoes, disponivel);
+            } else {
+                salvarVacina(nome, descricao, faixaEtaria, doses, observacoes, disponivel);
+            }
         }
+    }
+
+    private void verificarEExisteSalvar(String nome, String descricao, String faixaEtaria,
+                                        int doses, String observacoes, boolean disponivel) {
+        mostrarCarregando(true);
+
+        vacinaRepository.verificarVacinaExiste(nome, new VacinaRepository.OnVacinaExistsListener() {
+            @Override
+            public void onResult(boolean exists) {
+                if (exists) {
+                    mostrarCarregando(false);
+                    tilNome.setError("Já existe uma vacina com este nome");
+                } else {
+                    salvarVacina(nome, descricao, faixaEtaria, doses, observacoes, disponivel);
+                }
+            }
+        });
     }
 
     private void salvarVacina(String nome, String descricao, String faixaEtaria,
                               int doses, String observacoes, boolean disponivel) {
-        mostrarCarregando(true);
+        if (!modoEdicao) {
+            // Criar nova vacina
+            Vacina novaVacina = new Vacina(nome, descricao, faixaEtaria, doses, disponivel);
+            novaVacina.setObservacoes(observacoes);
 
-        // Simular delay de rede
-        btnSalvar.postDelayed(() -> {
-            if (modoEdicao && vacinaEditando != null) {
-                // Atualizar vacina existente
-                vacinaEditando.setNome(nome);
-                vacinaEditando.setDescricao(descricao);
-                vacinaEditando.setFaixaEtaria(faixaEtaria);
-                vacinaEditando.setNumeroDoses(doses);
-                vacinaEditando.setObservacoes(observacoes);
-                vacinaEditando.setDisponivel(disponivel);
+            // Adicionar ao Firebase
+            vacinaRepository.adicionarVacina(novaVacina, new VacinaRepository.OnVacinaOperationListener() {
+                @Override
+                public void onSuccess() {
+                    mostrarCarregando(false);
+                    mostrarMensagemSucesso("Vacina cadastrada com sucesso!");
 
-                mostrarMensagemSucesso("Vacina atualizada com sucesso!");
-            } else {
-                // Criar nova vacina
-                Vacina novaVacina = new Vacina(nome, descricao, faixaEtaria, doses, disponivel);
-                novaVacina.setId(UUID.randomUUID().toString());
-                novaVacina.setObservacoes(observacoes);
+                    // Voltar após 1 segundo
+                    btnSalvar.postDelayed(() -> {
+                        setResult(RESULT_OK);
+                        finish();
+                    }, 1000);
+                }
 
-                // Adicionar à lista temporária
-                vacinasCadastradas.add(novaVacina);
+                @Override
+                public void onError(String error) {
+                    mostrarCarregando(false);
+                    Snackbar.make(btnSalvar, "Erro ao cadastrar: " + error, Snackbar.LENGTH_LONG)
+                            .setBackgroundTint(getColor(R.color.error))
+                            .show();
+                }
+            });
+        } else {
+            // Atualizar vacina existente
+            vacinaEditando.setNome(nome);
+            vacinaEditando.setDescricao(descricao);
+            vacinaEditando.setFaixaEtaria(faixaEtaria);
+            vacinaEditando.setNumeroDoses(doses);
+            vacinaEditando.setObservacoes(observacoes);
+            vacinaEditando.setDisponivel(disponivel);
 
-                mostrarMensagemSucesso("Vacina cadastrada com sucesso!");
-            }
+            // Atualizar no Firebase
+            vacinaRepository.atualizarVacina(vacinaEditando, new VacinaRepository.OnVacinaOperationListener() {
+                @Override
+                public void onSuccess() {
+                    mostrarCarregando(false);
+                    mostrarMensagemSucesso("Vacina atualizada com sucesso!");
 
-            mostrarCarregando(false);
+                    // Voltar após 1 segundo
+                    btnSalvar.postDelayed(() -> {
+                        setResult(RESULT_OK);
+                        finish();
+                    }, 1000);
+                }
 
-            // Voltar após 1 segundo
-            btnSalvar.postDelayed(() -> {
-                setResult(RESULT_OK);
-                finish();
-            }, 1000);
-
-        }, 1500);
+                @Override
+                public void onError(String error) {
+                    mostrarCarregando(false);
+                    Snackbar.make(btnSalvar, "Erro ao atualizar: " + error, Snackbar.LENGTH_LONG)
+                            .setBackgroundTint(getColor(R.color.error))
+                            .show();
+                }
+            });
+        }
     }
 
     private void mostrarCarregando(boolean mostrar) {
@@ -285,6 +367,11 @@ public class CadastroVacinaActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // Se estiver carregando, não permitir voltar
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
         // Verificar se há alterações não salvas
         if (houveAlteracoes()) {
             new androidx.appcompat.app.AlertDialog.Builder(this)
@@ -299,11 +386,40 @@ public class CadastroVacinaActivity extends AppCompatActivity {
     }
 
     private boolean houveAlteracoes() {
-        // Verificar se algum campo foi preenchido
-        return !TextUtils.isEmpty(etNome.getText()) ||
-                !TextUtils.isEmpty(etDescricao.getText()) ||
-                !TextUtils.isEmpty(etFaixaEtaria.getText()) ||
-                !TextUtils.isEmpty(etDoses.getText()) ||
-                !TextUtils.isEmpty(etObservacoes.getText());
+        if (modoEdicao && vacinaEditando != null) {
+            // Comparar com dados originais
+            String nomeAtual = etNome.getText().toString().trim();
+            String descricaoAtual = etDescricao.getText().toString().trim();
+            String faixaEtariaAtual = etFaixaEtaria.getText().toString().trim();
+            String observacoesAtual = etObservacoes.getText().toString().trim();
+            boolean disponivelAtual = switchDisponivel.isChecked();
+
+            // Obter doses atual
+            String dosesStr = etDoses.getText().toString().trim();
+            int dosesAtual = 1;
+            try {
+                if (dosesStr.equals("Dose única")) {
+                    dosesAtual = 1;
+                } else if (dosesStr.equals("Anual")) {
+                    dosesAtual = -1;
+                } else {
+                    dosesAtual = Integer.parseInt(dosesStr);
+                }
+            } catch (NumberFormatException ignored) {}
+
+            return !nomeAtual.equals(vacinaEditando.getNome()) ||
+                    !descricaoAtual.equals(vacinaEditando.getDescricao()) ||
+                    !faixaEtariaAtual.equals(vacinaEditando.getFaixaEtaria()) ||
+                    dosesAtual != vacinaEditando.getNumeroDoses() ||
+                    !observacoesAtual.equals(vacinaEditando.getObservacoes() != null ? vacinaEditando.getObservacoes() : "") ||
+                    disponivelAtual != vacinaEditando.isDisponivel();
+        } else {
+            // Para novo cadastro, verificar se algum campo foi preenchido
+            return !TextUtils.isEmpty(etNome.getText()) ||
+                    !TextUtils.isEmpty(etDescricao.getText()) ||
+                    !TextUtils.isEmpty(etFaixaEtaria.getText()) ||
+                    !TextUtils.isEmpty(etDoses.getText()) ||
+                    !TextUtils.isEmpty(etObservacoes.getText());
+        }
     }
 }

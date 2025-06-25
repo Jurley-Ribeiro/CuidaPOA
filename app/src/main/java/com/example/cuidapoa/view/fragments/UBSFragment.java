@@ -15,15 +15,24 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.cuidapoa.MainActivity;
 import com.example.cuidapoa.R;
 import com.example.cuidapoa.adapter.UBSAdapter;
 import com.example.cuidapoa.model.UBS;
+import com.example.cuidapoa.repository.AuthRepository;
+import com.example.cuidapoa.repository.UBSRepository;
+import com.example.cuidapoa.util.SwipeToDeleteCallback;
+import com.example.cuidapoa.view.CadastroUBSActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListener {
@@ -32,11 +41,28 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
     private UBSAdapter adapter;
     private ProgressBar progressBar;
     private TextView tvEmpty;
+    private FloatingActionButton fabAdd;
+
+    // Firebase
+    private UBSRepository ubsRepository;
+    private AuthRepository authRepository;
+    private boolean isAdmin = false;
+
+    // Lista para controle local
+    private List<UBS> ubsList = new ArrayList<>();
+
+    // Para controle do "Desfazer"
+    private UBS ubsRemovida;
+    private int posicaoRemovida;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        // Inicializar repositories
+        ubsRepository = UBSRepository.getInstance();
+        authRepository = AuthRepository.getInstance();
     }
 
     @Override
@@ -53,36 +79,139 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
         recyclerView = view.findViewById(R.id.recycler_ubs);
         progressBar = view.findViewById(R.id.progress_bar);
         tvEmpty = view.findViewById(R.id.tv_empty);
+        fabAdd = view.findViewById(R.id.fab_add_ubs);
+
+        // Verificar se é admin
+        isAdmin = authRepository.isAdmin();
+
+        // Alternativamente, pode pegar da MainActivity
+        if (getActivity() instanceof MainActivity) {
+            isAdmin = ((MainActivity) getActivity()).isAdmin();
+        }
+
+        // Mostrar FAB apenas para admin
+        if (isAdmin) {
+            fabAdd.setVisibility(View.VISIBLE);
+            fabAdd.setOnClickListener(v -> abrirCadastroUBS());
+        } else {
+            fabAdd.setVisibility(View.GONE);
+        }
 
         // Configurar RecyclerView
         configurarRecyclerView();
 
-        // Carregar UBS
+        // Carregar UBS do Firebase
         carregarUBS();
     }
 
     private void configurarRecyclerView() {
-        adapter = new UBSAdapter(requireContext());
+        adapter = new UBSAdapter(requireContext(), isAdmin);
         adapter.setOnUBSClickListener(this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+
+        // Adicionar swipe to delete apenas para admin
+        if (isAdmin) {
+            configurarSwipeToDelete();
+        }
+    }
+
+    private void configurarSwipeToDelete() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(requireContext()) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position >= 0 && position < ubsList.size()) {
+                    UBS ubs = ubsList.get(position);
+                    removerUBSComDesfazer(ubs, position);
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void carregarUBS() {
         mostrarCarregando(true);
 
-        // Simular carregamento com dados de exemplo
-        recyclerView.postDelayed(() -> {
-            List<UBS> ubsExemplo = criarUBSExemplo();
-            adapter.setUBSList(ubsExemplo);
-            mostrarCarregando(false);
+        // Carregar UBS do Firebase
+        ubsRepository.obterTodasUBS(new UBSRepository.OnUBSLoadedListener() {
+            @Override
+            public void onUBSLoaded(List<UBS> lista) {
+                if (!isAdded()) return; // Verificar se o fragment ainda está anexado
 
-            if (ubsExemplo.isEmpty()) {
-                mostrarListaVazia(true);
+                ubsList = new ArrayList<>(lista);
+
+                // Se não houver UBS no Firebase e for a primeira vez, adicionar exemplos
+                if (ubsList.isEmpty() && isAdmin) {
+                    adicionarUBSExemplo();
+                } else {
+                    // Ordenar por nome
+                    Collections.sort(ubsList, new Comparator<UBS>() {
+                        @Override
+                        public int compare(UBS u1, UBS u2) {
+                            return u1.getNome().compareToIgnoreCase(u2.getNome());
+                        }
+                    });
+
+                    adapter.setUBSList(ubsList);
+                    mostrarCarregando(false);
+                    mostrarListaVazia(ubsList.isEmpty());
+                }
             }
-        }, 1000);
+
+            @Override
+            public void onError(String error) {
+                if (!isAdded()) return;
+
+                mostrarCarregando(false);
+
+                // Se houver erro, tentar usar cache local
+                ubsList = ubsRepository.getUBSCache();
+                if (!ubsList.isEmpty()) {
+                    adapter.setUBSList(ubsList);
+                    Snackbar.make(requireView(), "Modo offline: mostrando dados salvos",
+                            Snackbar.LENGTH_LONG).show();
+                } else {
+                    mostrarListaVazia(true);
+                    Snackbar.make(requireView(), "Erro ao carregar UBS: " + error,
+                            Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void adicionarUBSExemplo() {
+        // Lista de UBS exemplo para popular o banco inicialmente
+        List<UBS> ubsExemplo = criarUBSExemplo();
+        final int[] adicionadas = {0};
+        final int total = ubsExemplo.size();
+
+        for (UBS ubs : ubsExemplo) {
+            ubsRepository.adicionarUBS(ubs, new UBSRepository.OnUBSOperationListener() {
+                @Override
+                public void onSuccess() {
+                    adicionadas[0]++;
+                    if (adicionadas[0] == total) {
+                        // Todas foram adicionadas, recarregar lista
+                        if (isAdded()) {
+                            carregarUBS();
+                        }
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+                    adicionadas[0]++;
+                    if (adicionadas[0] == total && isAdded()) {
+                        carregarUBS();
+                    }
+                }
+            });
+        }
     }
 
     private List<UBS> criarUBSExemplo() {
@@ -98,6 +227,9 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
         );
         ubs1.setAbertaAgora(true);
         ubs1.setServicos(Arrays.asList("Clínica Geral", "Pediatria", "Ginecologia", "Vacinação", "Farmácia"));
+        ubs1.setEmail("centro@ubs.poa.br");
+        ubs1.setLatitude(-30.0346);
+        ubs1.setLongitude(-51.2177);
         ubsList.add(ubs1);
 
         // UBS Santa Marta
@@ -188,11 +320,13 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
     }
 
     private void mostrarCarregando(boolean mostrar) {
+        if (!isAdded()) return;
         progressBar.setVisibility(mostrar ? View.VISIBLE : View.GONE);
         recyclerView.setVisibility(mostrar ? View.GONE : View.VISIBLE);
     }
 
     private void mostrarListaVazia(boolean vazia) {
+        if (!isAdded()) return;
         tvEmpty.setVisibility(vazia ? View.VISIBLE : View.GONE);
         recyclerView.setVisibility(vazia ? View.GONE : View.VISIBLE);
     }
@@ -256,6 +390,28 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
         }
     }
 
+    @Override
+    public void onEditClick(UBS ubs) {
+        // Abrir tela de edição
+        Intent intent = new Intent(getActivity(), CadastroUBSActivity.class);
+        intent.putExtra("ubs_id", ubs.getId());
+        startActivityForResult(intent, 200);
+    }
+
+    @Override
+    public void onDeleteClick(UBS ubs) {
+        // Mostrar confirmação antes de excluir
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Confirmar Exclusão")
+                .setMessage("Deseja realmente excluir a UBS " + ubs.getNome() + "?")
+                .setPositiveButton("Excluir", (dialog, which) -> {
+                    excluirUBS(ubs);
+                })
+                .setNegativeButton("Cancelar", null)
+                .setIcon(R.drawable.ic_delete_black_24dp)
+                .show();
+    }
+
     private void mostrarDetalhesUBS(UBS ubs) {
         StringBuilder servicos = new StringBuilder();
         if (ubs.getServicos() != null && !ubs.getServicos().isEmpty()) {
@@ -266,7 +422,13 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
 
         String detalhes = "Endereço: " + ubs.getEnderecoCompleto() + "\n\n" +
                 "Telefone: " + ubs.getTelefone() + "\n\n" +
-                "Horário: " + ubs.getHorarioFuncionamento() + "\n\n" +
+                "Horário: " + ubs.getHorarioFuncionamento() + "\n\n";
+
+        if (ubs.getEmail() != null && !ubs.getEmail().isEmpty()) {
+            detalhes += "Email: " + ubs.getEmail() + "\n\n";
+        }
+
+        detalhes += "Status: " + (ubs.isAbertaAgora() ? "Aberta agora" : "Fechada") + "\n\n" +
                 "Serviços oferecidos:\n" + servicos.toString();
 
         new MaterialAlertDialogBuilder(requireContext())
@@ -276,5 +438,82 @@ public class UBSFragment extends Fragment implements UBSAdapter.OnUBSClickListen
                 .setNeutralButton("Ligar", (dialog, which) -> onTelefoneClick(ubs))
                 .setNegativeButton("Ver no Mapa", (dialog, which) -> onEnderecoClick(ubs))
                 .show();
+    }
+
+    private void excluirUBS(UBS ubs) {
+        // Remover do Firebase
+        ubsRepository.excluirUBS(ubs.getId(), new UBSRepository.OnUBSOperationListener() {
+            @Override
+            public void onSuccess() {
+                if (!isAdded()) return;
+
+                Snackbar.make(requireView(),
+                                "UBS " + ubs.getNome() + " excluída com sucesso",
+                                Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(requireContext().getColor(R.color.success))
+                        .show();
+            }
+
+            @Override
+            public void onError(String error) {
+                if (!isAdded()) return;
+
+                Snackbar.make(requireView(),
+                                "Erro ao excluir UBS: " + error,
+                                Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(requireContext().getColor(R.color.error))
+                        .show();
+            }
+        });
+    }
+
+    private void removerUBSComDesfazer(UBS ubs, int position) {
+        // Guardar para desfazer
+        ubsRemovida = ubs;
+        posicaoRemovida = position;
+
+        // Remover da lista local temporariamente
+        ubsList.remove(position);
+        adapter.setUBSList(ubsList);
+
+        // Mostrar Snackbar com ação de desfazer
+        Snackbar snackbar = Snackbar.make(requireView(),
+                        "UBS " + ubs.getNome() + " removida",
+                        Snackbar.LENGTH_LONG)
+                .setAction("Desfazer", v -> {
+                    // Restaurar na lista local
+                    ubsList.add(posicaoRemovida, ubsRemovida);
+                    adapter.setUBSList(ubsList);
+                    ubsRemovida = null;
+                })
+                .setBackgroundTint(requireContext().getColor(R.color.error));
+
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar transientBottomBar, int event) {
+                if (event != Snackbar.Callback.DISMISS_EVENT_ACTION && ubsRemovida != null) {
+                    // Se não foi desfeito, excluir do Firebase
+                    excluirUBS(ubsRemovida);
+                    ubsRemovida = null;
+                }
+            }
+        });
+
+        snackbar.show();
+    }
+
+    private void abrirCadastroUBS() {
+        Intent intent = new Intent(getActivity(), CadastroUBSActivity.class);
+        startActivityForResult(intent, 200);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
+            // Recarregar lista após cadastro/edição
+            carregarUBS();
+        }
     }
 }

@@ -114,4 +114,18 @@
     <string name="endereco_completo">Endereço completo</string>
     <string name="aberta">Aberta</string>
     <string name="nome_da_ubs">Nome da UBS</string>
+    <string name="adicionar_ubs">Adicionar UBS</string>
+    <string name="nenhuma_ubs_encontrada">Nenhuma UBS encontrada</string>
+    <string name="acesso_excl_gestores_sistema">Acesso exclusivo para gestores do sistema</string>
+    <string name="esqueceu_senha">Esqueceu a senha?</string>
+    <string name="acesso_gestor">Acesso Gestor</string>
+    <string name="campos_obrigatorios">* Campos obrigatórios</string>
+    <string name="email_opcional">Email (opcional)</string>
+    <string name="info_ubs">Informações da UBS</string>
+    <string name="bairro">Bairro *</string>
+    <string name="telefone">Telefone *</string>
+    <string name="ubs_esta_aberta_agora">UBS está aberta agora</string>
+    <string name="salvar_ubs">Salvar UBS</string>
+    <string name="suporte_horario_atend">Horário de Atendimento</string>
+    <string name="suporte_horario">Segunda a Sexta: 8h às 18h\nSábados: 8h às 12h</string>
 </resources>

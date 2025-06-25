@@ -1,7 +1,5 @@
 package com.example.cuidapoa.view.fragments;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,6 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.example.cuidapoa.R;
-import com.google.android.material.snackbar.Snackbar;
 
 public class HomeFragment extends Fragment {
 
@@ -47,21 +44,8 @@ public class HomeFragment extends Fragment {
         });
 
         cardSuporte.setOnClickListener(v -> {
-            // Exemplo de intent implícita para enviar e-mail
-            enviarEmailSuporte();
+            // Navegar para tela de suporte
+            Navigation.findNavController(v).navigate(R.id.nav_suporte);
         });
-    }
-
-    private void enviarEmailSuporte() {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"suporte@cuidapoa.com.br"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.suporte_assunto_email));
-
-        if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivity(intent);
-        } else {
-            Snackbar.make(requireView(), "Nenhum app de e-mail encontrado", Snackbar.LENGTH_SHORT).show();
-        }
     }
 }

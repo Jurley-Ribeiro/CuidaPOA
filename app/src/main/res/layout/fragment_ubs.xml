@@ -31,9 +31,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Nenhuma UBS encontrada"
+        android:text="@string/nenhuma_ubs_encontrada"
         android:textSize="@dimen/text_size_medium"
         android:textColor="@color/text_secondary"
         android:visibility="gone" />
+
+    <!-- FAB para adicionar UBS (visível apenas para admin) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_ubs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/margin_large"
+        android:src="@drawable/ic_add_24dp"
+        android:tint="@color/white"
+        android:backgroundTint="@color/primary_teal"
+        android:contentDescription="@string/adicionar_ubs"
+        android:visibility="gone"
+        app:elevation="6dp" />
 
 </FrameLayout>

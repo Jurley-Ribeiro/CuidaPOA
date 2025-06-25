@@ -25,9 +25,9 @@
             android:layout_width="@dimen/icon_size_medium"
             android:layout_height="@dimen/icon_size_medium"
             android:src="@drawable/ic_vacina_03_24"
-            app:tint="@color/primary_teal"
-            android:layout_marginEnd="@dimen/margin_medium"
+            android:tint="@color/primary_teal"
             android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/margin_medium"
             android:contentDescription="@string/vacinas_titulo" />
 
         <!-- Informações da vacina -->
@@ -37,7 +37,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Nome e disponibilidade -->
+            <!-- Nome e Chip de disponibilidade -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Nome da Vacina"
+                    android:text="@string/nome_da_vacina"
                     android:textSize="@dimen/text_size_medium"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold"
@@ -60,12 +60,24 @@
                     android:id="@+id/chip_disponibilidade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Disponível"
+                    android:text="@string/disponivel"
                     android:textSize="@dimen/text_size_tiny"
                     android:textColor="@color/white"
                     app:chipMinHeight="24dp"
                     app:chipCornerRadius="12dp"
                     android:clickable="false" />
+
+                <!-- Botão de menu (3 pontos) -->
+                <ImageButton
+                    android:id="@+id/btn_menu_vacina"
+                    android:layout_width="@dimen/icon_size_small"
+                    android:layout_height="@dimen/icon_size_small"
+                    android:src="@drawable/ic_more_vert_24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Menu de opções"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:visibility="gone"
+                    app:tint="@color/text_secondary" />
 
             </LinearLayout>
 
@@ -74,7 +86,7 @@
                 android:id="@+id/tv_descricao_vacina"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Descrição da vacina"
+                android:text="@string/descricao_vacina"
                 android:textSize="@dimen/text_size_small"
                 android:textColor="@color/text_secondary"
                 android:layout_marginTop="@dimen/margin_tiny"
@@ -93,11 +105,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Faixa etária: Todas"
+                    android:text="Faixa etária: Ao nascer"
                     android:textSize="@dimen/text_size_tiny"
                     android:textColor="@color/text_secondary"
                     android:drawableStart="@drawable/ic_person_24"
-                    android:drawablePadding="@dimen/padding_tiny"
+                    android:drawablePadding="4dp"
                     android:drawableTint="@color/text_secondary"
                     android:gravity="center_vertical" />
 
@@ -105,9 +117,13 @@
                     android:id="@+id/tv_doses"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Doses: 2"
+                    android:text="Dose única"
                     android:textSize="@dimen/text_size_tiny"
-                    android:textColor="@color/text_secondary" />
+                    android:textColor="@color/text_secondary"
+                    android:drawableStart="@drawable/ic_numbers_24dp"
+                    android:drawablePadding="4dp"
+                    android:drawableTint="@color/text_secondary"
+                    android:gravity="center_vertical" />
 
             </LinearLayout>
 

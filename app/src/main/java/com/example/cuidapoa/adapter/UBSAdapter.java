@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -15,6 +17,8 @@ import com.example.cuidapoa.R;
 import com.example.cuidapoa.model.UBS;
 import com.google.android.material.chip.Chip;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
@@ -23,15 +27,19 @@ public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
     private List<UBS> ubsList;
     private List<UBS> ubsListFiltrada;
     private OnUBSClickListener listener;
+    private boolean isAdmin;
 
     public interface OnUBSClickListener {
         void onUBSClick(UBS ubs);
         void onTelefoneClick(UBS ubs);
         void onEnderecoClick(UBS ubs);
+        void onEditClick(UBS ubs);
+        void onDeleteClick(UBS ubs);
     }
 
-    public UBSAdapter(Context context) {
+    public UBSAdapter(Context context, boolean isAdmin) {
         this.context = context;
+        this.isAdmin = isAdmin;
         this.ubsList = new ArrayList<>();
         this.ubsListFiltrada = new ArrayList<>();
     }
@@ -61,6 +69,15 @@ public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
                 }
             }
         }
+
+        // Manter ordenação alfabética após filtrar
+        Collections.sort(ubsListFiltrada, new Comparator<UBS>() {
+            @Override
+            public int compare(UBS u1, UBS u2) {
+                return u1.getNome().compareToIgnoreCase(u2.getNome());
+            }
+        });
+
         notifyDataSetChanged();
     }
 
@@ -91,6 +108,7 @@ public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
         private Chip chipStatus;
         private ImageButton btnTelefone;
         private ImageButton btnMapa;
+        private ImageButton btnMenu;
 
         public UBSViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +120,7 @@ public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
             chipStatus = itemView.findViewById(R.id.chip_status);
             btnTelefone = itemView.findViewById(R.id.btn_telefone);
             btnMapa = itemView.findViewById(R.id.btn_mapa);
+            btnMenu = itemView.findViewById(R.id.btn_menu_ubs);
         }
 
         public void bind(UBS ubs) {
@@ -137,6 +156,37 @@ public class UBSAdapter extends RecyclerView.Adapter<UBSAdapter.UBSViewHolder> {
                     listener.onEnderecoClick(ubs);
                 }
             });
+
+            // Mostrar menu apenas para admin
+            if (isAdmin) {
+                btnMenu.setVisibility(View.VISIBLE);
+                btnMenu.setOnClickListener(v -> mostrarMenuOpcoes(v, ubs));
+            } else {
+                btnMenu.setVisibility(View.GONE);
+            }
+        }
+
+        private void mostrarMenuOpcoes(View view, UBS ubs) {
+            PopupMenu popup = new PopupMenu(context, view);
+            popup.inflate(R.menu.menu_item_ubs);
+
+            popup.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.action_edit) {
+                    if (listener != null) {
+                        listener.onEditClick(ubs);
+                    }
+                    return true;
+                } else if (id == R.id.action_delete) {
+                    if (listener != null) {
+                        listener.onDeleteClick(ubs);
+                    }
+                    return true;
+                }
+                return false;
+            });
+
+            popup.show();
         }
     }
 }

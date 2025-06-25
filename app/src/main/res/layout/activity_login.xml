@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background_light"
     tools:context=".view.LoginActivity">
 
     <!-- Toolbar -->
@@ -31,101 +32,125 @@
 
             <!-- Logo -->
             <ImageView
-                android:layout_width="@dimen/logo_splash_size"
-                android:layout_height="@dimen/logo_splash_size"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_logo_splash"
                 android:layout_marginTop="@dimen/margin_large"
                 android:layout_marginBottom="@dimen/margin_extra_large"
-                android:src="@drawable/ic_logo_splash"
                 android:contentDescription="@string/app_name" />
 
-            <!-- Título -->
+            <!-- Card do formulário -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_large"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_large">
+
+                    <!-- Título -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/acesso_gestor"
+                        android:textSize="@dimen/text_size_extra_large"
+                        android:textColor="@color/primary_teal"
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/margin_medium" />
+
+                    <!-- Campo Email -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_email"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:hint="@string/login_email"
+                        app:startIconDrawable="@drawable/ic_email_24"
+                        app:startIconTint="@color/primary_teal">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Campo Senha -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_senha"
+                        style="@style/Widget.CuidaPOA.TextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:hint="@string/login_senha"
+                        app:startIconDrawable="@drawable/ic_lock_24"
+                        app:startIconTint="@color/primary_teal"
+                        app:passwordToggleEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_senha"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionDone" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Esqueceu a senha -->
+                    <TextView
+                        android:id="@+id/tv_esqueceu_senha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/esqueceu_senha"
+                        android:textColor="@color/accent_blue"
+                        android:textSize="@dimen/text_size_small"
+                        android:padding="@dimen/padding_small"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                    <!-- Botão Login -->
+                    <Button
+                        android:id="@+id/btn_login"
+                        style="@style/Widget.CuidaPOA.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height"
+                        android:text="@string/login_entrar"
+                        android:textSize="@dimen/text_size_medium" />
+
+                    <!-- Progress Bar -->
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_width="@dimen/progress_bar_size"
+                        android:layout_height="@dimen/progress_bar_size"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/margin_medium"
+                        android:indeterminateTint="@color/primary_teal"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Informação sobre login -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login_titulo"
-                android:textSize="@dimen/text_size_extra_large"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_medium"
-                android:layout_marginBottom="@dimen/margin_large" />
-
-            <!-- Campo E-mail -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_email"
-                style="@style/Widget.CuidaPOA.TextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:hint="@string/login_email"
-                app:startIconDrawable="@drawable/ic_email_24"
-                app:startIconTint="@color/primary_teal">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:fontFamily="@font/roboto" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Campo Senha -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_senha"
-                style="@style/Widget.CuidaPOA.TextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:hint="@string/login_senha"
-                app:startIconDrawable="@drawable/ic_lock_24"
-                app:startIconTint="@color/primary_teal"
-                app:endIconMode="password_toggle">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_senha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:fontFamily="@font/roboto" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Esqueci minha senha - REMOVIDO para simplificar -->
-
-            <!-- Botão Login -->
-            <Button
-                android:id="@+id/btn_login"
-                style="@style/Widget.CuidaPOA.Button"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/button_height"
-                android:text="@string/login_entrar"
-                android:textSize="@dimen/text_size_medium"
-                android:layout_marginBottom="@dimen/margin_medium" />
-
-            <!-- Progress Bar -->
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/progress_bar_size"
-                android:layout_height="@dimen/progress_bar_size"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:visibility="gone"
-                android:indeterminateTint="@color/primary_teal" />
-
-            <!-- Espaço flexível -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <!-- Texto informativo -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/area_restrita_gestores"
-                android:textSize="@dimen/text_size_tiny"
+                android:text="@string/acesso_excl_gestores_sistema"
+                android:textSize="@dimen/text_size_small"
                 android:textColor="@color/text_secondary"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginBottom="@dimen/margin_medium" />
 
         </LinearLayout>
